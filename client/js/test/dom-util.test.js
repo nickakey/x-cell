@@ -12,6 +12,11 @@ describe('dom-util', () => {
 				const el = createTH();
 				expect(el.tagName).toBe('TH');
 			})
+			it('sets the text of the TH', () => {
+				const text = 'Oh that\'s just great! Well, game over man!';
+				const el = createTH(text);
+				expect(el.textContent).toEqual(text);
+			});
 		});
 		describe('createTD', () => {
 			it('produces valid TD element', () => {
