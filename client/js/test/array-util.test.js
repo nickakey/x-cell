@@ -1,5 +1,5 @@
 const { getRange,
-		getLetterRange } = require('../array_util.js'); 
+		getLetterRange } = require('../array-util.js'); 
 
 /* This is because the require file of "array-util" is an object with multiple keys,
 so adding the { getRange } object, means that we are supposed to only interact 
