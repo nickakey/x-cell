@@ -12,7 +12,68 @@ describe('table-view', () => {
 
 	});
 
+	describe('formula bar', () => {
+		it('makes changes TO the value of the current cell', () => {
+			const model = new TableModel(3, 3);
+			const view = new TableView(model);
+			view.init();
+
+			let trs = document.querySelectorAll('TBODY TR');
+			let td = trs[0].cells[0];
+			expect(td.textContent).toBe('')
+
+			document.querySelector('#formula-bar').value = '65';
+			view.handleFormulaBarChange();
+
+			trs = document.querySelectorAll('TBODY TR');
+			expect(trs[0].cells[0].textContent).toBe('65');
+		});
+
+
+		it('updates FROM the value of the current cell', () => {
+			//set up the initial state
+			const model = new TableModel(3, 3);
+			const view = new TableView(model);
+			model.setValue({col: 2, row: 1}, '123');
+			view.init();
+
+			//inspect the initial state
+			const formulaBarEl = document.querySelector('#formula-bar');
+			expect(formulaBarEl.value).toBe('');
+			// simulate user action	 
+			const trs = document.querySelectorAll('TBODY TR');
+			trs[1].cells[2].click();
+
+			expect(formulaBarEl.value).toBe('123');
+
+
+		})
+
+	});
+
 	describe('table body', () => {
+		it('highlights the current cell when clicked', () => {
+			//set up the initial state
+			const model = new TableModel(10, 5);
+			const view = new TableView(model);
+			view.init();
+
+			//inspect the initial state	
+			let trs = document.querySelectorAll('TBODY TR');
+			let td = trs[2].cells[3];
+			expect(td.className).toBe('');
+
+			//simulate user action
+			td.click();
+			//inspect the resulting state
+			trs = document.querySelectorAll('TBODY TR');
+			td = trs[2].cells[3];
+			expect(td.className).not.toBe('');
+
+		});
+
+
+
 		it('has the right size', () => {
 			//set up the initial state
 			const numCols = 6;

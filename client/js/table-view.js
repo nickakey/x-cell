@@ -7,7 +7,7 @@ class TableView {
 	}
 
 	init() {
-		this.initDomReferences();
+		this.initDomReferences(); 
 		this.initCurrentCell();
 		this.renderTable(); 
 		this.attachEventHandlers();
@@ -16,11 +16,23 @@ class TableView {
 	initDomReferences() {
 		this.headerRowEl = document.querySelector('THEAD TR');
 		this.sheetBodyEl = document.querySelector('TBODY');
-	}
+		this.formulaBarEl = document.querySelector('#formula-bar');
+	}  
 
 	initCurrentCell() {
 		this.currentCellLocation = { col: 0, row: 0 };	
+		this.renderFormulaBar();
 	}	
+
+	normalizeValueForRendering(value) {
+		return value || ''; 
+	}
+
+	renderFormulaBar() {
+		const currentCellValue = this.model.getValue(this.currentCellLocation);
+		this.formulaBarEl.value = this.normalizeValueForRendering(currentCellValue);
+		this.formulaBarEl.focus();
+	}
 
 	renderTable() {
 		this.renderTableHeader();
@@ -32,8 +44,8 @@ class TableView {
 
 		getLetterRange('A', this.model.numCols)
 			.map(colLabel => createTH(colLabel))
+			// .forEach(things => console.log('things ', things));
 			.forEach(th => this.headerRowEl.appendChild(th));
-
 	}
 
 	isCurrentCell(col, row) {
@@ -49,8 +61,10 @@ class TableView {
 			const tr = createTR();
 			for (let col = 0; col < this.model.numCols; col++) {
 				const position = {col: col, row: row};
-				const value = this.model.getValue(position);
-				const td = createTD(value);
+			
+				const value = this.model.getValue(position); 
+
+				const td = createTD(value); 
 
 				if (this.isCurrentCell(col, row)){
 					td.className = 'current-cell';
@@ -66,22 +80,24 @@ class TableView {
 
 	attachEventHandlers() {
 		this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
+		this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
 	}
 
-	isColumnHeaderRow(row) {
-		return row < 1;
 
+	handleFormulaBarChange(evt) {
+		const value = this.formulaBarEl.value;
+		this.model.setValue(this.currentCellLocation, value);
+		this.renderTableBody();
 	}
 
 	handleSheetClick(evt) {
 		const col = evt.target.cellIndex;
 		const row = evt.target.parentElement.rowIndex - 1;
 
-		if (!this.isColumnHeaderRow(row)) {
-			this.currentCellLocation = { col: col, row: row };
-			this.renderTableBody();
-
-		}
+	
+		this.currentCellLocation = { col: col, row: row };
+		this.renderTableBody(); 
+		this.renderFormulaBar();
 	}
 
 
