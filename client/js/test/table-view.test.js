@@ -118,4 +118,21 @@ describe('table-view', () => {
 
 		});
 	});
+
+	describe('table footer', () => {
+		it('has the right size', () => {
+			//set up the initial state
+			const numCols = 6;
+			const numRows = 10;
+			const model = new TableModel(numCols, numRows);
+			const view = new TableView(model);
+			view.init();
+			//inspect the initial state
+
+			let tfs = document.querySelectorAll('TFOOT');
+			console.log('tfs.length ', tfs.length)
+			console.log('tfs ', tfs)
+			// expect(tfs.length).toBe(numCols);
+		});
+	});
 });

@@ -17,6 +17,7 @@ class TableView {
 		this.headerRowEl = document.querySelector('THEAD TR');
 		this.sheetBodyEl = document.querySelector('TBODY');
 		this.formulaBarEl = document.querySelector('#formula-bar');
+		this.footerRowEl = document.querySelector('TFOOT TR')
 	}  
 
 	initCurrentCell() {
@@ -37,22 +38,37 @@ class TableView {
 	renderTable() {
 		this.renderTableHeader();
 		this.renderTableBody();
+		this.renderTableFooter();
 	}
 
 	renderTableHeader() {
 		removeChildren(this.headerRowEl)
-
 		getLetterRange('A', this.model.numCols)
 			.map(colLabel => createTH(colLabel))
-			// .forEach(things => console.log('things ', things));
 			.forEach(th => this.headerRowEl.appendChild(th));
 	}
+
+
 
 	isCurrentCell(col, row) {
 		return this.currentCellLocation.col === col
 		 && 
 		 	   this.currentCellLocation.row === row; 
 
+	}
+
+	renderTableFooter() {
+		const footerFragment = document.createDocumentFragment();
+			const row = this.currentCellLocation.row;
+			for (let col = 0; col < this.model.numCols; col++) {
+				const position = {col: col, row: row};
+				const sum = this.calculateColumnSum(col)
+				const td = createTD(sum);
+				td.className = 'footer' 
+				footerFragment.appendChild(td); 
+			}
+		removeChildren(this.footerRowEl);
+		this.footerRowEl.appendChild(footerFragment);
 	}
 
 	renderTableBody() {
@@ -88,6 +104,7 @@ class TableView {
 		const value = this.formulaBarEl.value;
 		this.model.setValue(this.currentCellLocation, value);
 		this.renderTableBody();
+		this.renderTableFooter();
 	}
 
 	handleSheetClick(evt) {
@@ -98,9 +115,22 @@ class TableView {
 		this.currentCellLocation = { col: col, row: row };
 		this.renderTableBody(); 
 		this.renderFormulaBar();
+		this.renderTableFooter();
 	}
 
-
+	calculateColumnSum(col) {
+		let sum = 0;
+		for(let row = 0; row < this.model.numRows; row++) {
+			if(this.model.getValue({col: col, row: row}) !== undefined) {
+				if(!isNaN(parseInt(this.model.getValue({col: col, row: row})))) {
+					sum = sum + parseInt(this.model.getValue({col: col, row: row}));
+				}
+			}
+		}
+		return sum;
+	}
 }
+
+
 
 module.exports = TableView;

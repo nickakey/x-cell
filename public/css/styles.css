@@ -10,6 +10,11 @@ th {
 	padding: 3px;
 }
 
+.footer {
+	background-color: #7FFF00;
+}
+
+
 .current-cell {
 	background-color: pink;
 }
