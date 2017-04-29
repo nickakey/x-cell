@@ -120,7 +120,7 @@ describe('table-view', () => {
 	});
 
 	describe('table footer', () => {
-		it('has the right size', () => {
+		it('has the right number of columns', () => {
 			//set up the initial state
 			const numCols = 6;
 			const numRows = 10;
@@ -129,10 +129,58 @@ describe('table-view', () => {
 			view.init();
 			//inspect the initial state
 
-			let tfs = document.querySelectorAll('TFOOT');
-			console.log('tfs.length ', tfs.length)
-			console.log('tfs ', tfs)
-			// expect(tfs.length).toBe(numCols);
+			let tfs = document.querySelectorAll('TFOOT TR TD');
+			expect(tfs.length).toBe(numCols);
+		});
+
+		it('Calculates Sums of positive numbers', () => {
+			//set up the initial state
+			const model = new TableModel(3, 3);
+			const view = new TableView(model);
+			model.setValue({col: 1, row: 1}, '5');
+			model.setValue({col: 1, row: 2}, '5');
+			view.init();
+			//inspect the initial state
+
+			let tfs = document.querySelectorAll('TFOOT TR TD');
+			expect(tfs[1].textContent).toBe('10');
+		});
+		it('Calculates Sums of negative numbers', () => {
+			//set up the initial state
+			const model = new TableModel(3, 3);
+			const view = new TableView(model);
+			model.setValue({col: 1, row: 1}, '-5');
+			model.setValue({col: 1, row: 2}, '-5');
+			view.init();
+			//inspect the initial state
+
+			let tfs = document.querySelectorAll('TFOOT TR TD');
+			expect(tfs[1].textContent).toBe('-10');
+		});
+		it('Calculates Sums of positive & negative numbers', () => {
+			//set up the initial state
+			const model = new TableModel(3, 3);
+			const view = new TableView(model);
+			model.setValue({col: 1, row: 1}, '5');
+			model.setValue({col: 1, row: 2}, '-10');
+			view.init();
+			//inspect the initial state
+
+			let tfs = document.querySelectorAll('TFOOT TR TD');
+			expect(tfs[1].textContent).toBe('-5');
+		});
+		it('Calculates Sums even if there are words in cells', () => {
+			//set up the initial state
+			const model = new TableModel(3, 3);
+			const view = new TableView(model);
+			model.setValue({col: 1, row: 1}, '5');
+			model.setValue({col: 1, row: 2}, '5');
+			model.setValue({col: 1, row: 3}, 'chicken');
+			view.init();
+			//inspect the initial state
+
+			let tfs = document.querySelectorAll('TFOOT TR TD');
+			expect(tfs[1].textContent).toBe('10');
 		});
 	});
 });
