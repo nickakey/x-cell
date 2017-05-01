@@ -1,4 +1,4 @@
-const { getLetterRange } = require('./array-util');
+const { getLetterRange, getRange } = require('./array-util');
 const { removeChildren, createTR, createTH, createTD } = require('./dom-util');
 
 class TableView {
@@ -57,18 +57,12 @@ class TableView {
 
 	}
 
+
 	renderTableFooter() {
-		const footerFragment = document.createDocumentFragment();
-			const row = this.currentCellLocation.row;
-			for (let col = 0; col < this.model.numCols; col++) {
-				const position = {col: col, row: row};
-				const sum = this.calculateColumnSum(col)
-				const td = createTD(sum);
-				td.className = 'footer' 
-				footerFragment.appendChild(td); 
-			}
-		removeChildren(this.footerRowEl);
-		this.footerRowEl.appendChild(footerFragment);
+		removeChildren(this.footerRowEl)	
+		getRange(0, (this.model.numCols))
+			.map(column => createTD(this.calculateColumnSum(column)))
+			.forEach(tf => this.footerRowEl.appendChild(tf))
 	}
 
 	renderTableBody() {
@@ -121,11 +115,10 @@ class TableView {
 	calculateColumnSum(col) {
 		let sum = 0;
 		for(let row = 0; row < this.model.numRows; row++) {
-			if(this.model.getValue({col: col, row: row}) !== undefined) {
-				if(!isNaN(parseInt(this.model.getValue({col: col, row: row})))) {
-					sum = sum + parseInt(this.model.getValue({col: col, row: row}));
+			if(this.model.getValue({col: col, row: row}) !== undefined 
+				&& !isNaN(parseInt(this.model.getValue({col: col, row: row})))) {
+					sum += parseInt(this.model.getValue({col: col, row: row}));
 				}
-			}
 		}
 		return sum;
 	}
