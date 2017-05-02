@@ -20,7 +20,7 @@ app.set('port', process.env.PORT || 3000);  //this is setting the port. I'm not 
 const server = http.createServer(app);  
 
 server.listen(app.get('port'), () => {   //this is telling server.listen to listen on port (which is defined in app.set)
-	console.log(`Server listening on port ${app.get('port')}...`) //this is a call back function to confirm that port is listening
+  console.log(`Server listening on port ${app.get('port')}...`) //this is a call back function to confirm that port is listening
 });
 
 
